@@ -1,0 +1,336 @@
+---
+title: "Palmer Penguins: Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    css:  css_code.css
+runtime: shiny
+---
+
+
+```{r,include=FALSE}
+# LOAD PACKAGES
+
+rm(list = ls())
+
+library(flexdashboard)
+library(shinyWidgets)
+library(shiny)
+library(tidyverse)
+library(plotly)
+library(DT)
+library(palmerpenguins)
+library(htmltools)
+
+
+
+
+# READ IN DATA
+
+
+
+dat <- palmerpenguins::penguins
+
+
+
+
+
+# DATA PROCESSING I: WIDGETS
+
+
+
+## WIDGETS FOR CATEGORIES: ISLAND AND SPECIES
+
+
+
+species <-unique(dat$species)
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+<b>Penguin Species</b> {data-orientation=rows}
+=====================================  
+
+
+Sidebar {.sidebar}
+-------------------------------------
+
+
+```{r}
+
+selectInput("species", label = HTML('<b style="color:#fffff;
+               font-size: 20px;
+               ">Select Penguins Species:</b>'), 
+    choices = species, 
+    selected = "Chinstrap")
+
+
+radioButtons("plotType", HTML('<b style="color:#fffff;
+               font-size: 20px;
+               ">Select Plot or Table:</b>'),
+             choices = c("Histogram Chart","Data Table"),
+             selected = "Histogram Chart")
+
+
+```
+
+
+
+
+
+
+Column1 
+-------------------------------------
+
+
+### <b>Total Count</b>
+
+```{r}
+
+renderValueBox({
+  
+  d2 <- dat %>%
+    filter(species %in% input$species)
+  
+  penguins <- count(d2)
+  
+  valueBox(penguins, 
+           icon = "fa fa-user-circle")
+  
+})
+
+
+
+```
+
+
+
+
+
+### <b>Penguin Species</b>
+
+```{r}
+
+
+renderValueBox({
+  
+  d2 <- dat %>%
+    filter(species %in% input$species) 
+  
+  penguins <- unique(d2$species)
+  
+  valueBox(penguins, 
+           icon = "fa fa-users")
+  
+})
+
+
+
+
+
+```
+
+
+
+
+
+
+### <b>Avg. Body Mass<br>(Grams)</b>
+
+
+```{r}
+
+renderValueBox({
+  
+  d2 <- dat %>%
+    filter(species %in% input$species)  
+  
+  penguins <- ceiling(mean(d2$body_mass_g,na.rm=T))
+  
+  valueBox(penguins, 
+           icon = "fa fa-moon-o")
+  
+})
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
+Row2
+-------------------------------------
+
+### <b>Palmer Penguins Table</b>
+
+```{r}
+
+uiOutput("dynamic")
+
+output$dynamic <- renderUI({ 
+  if (input$plotType == "Histogram Chart") plotOutput("plot")
+  else if (input$plotType == "Data Table") dataTableOutput("table")
+})
+
+output$plot <- renderPlot({ 
+  
+  
+  d2 <- dat %>%
+    filter(species %in% input$species)
+  
+  ggplot(d2) +
+    aes(x = body_mass_g) +
+    geom_histogram(bins = 30L, fill = "#112446") +
+    theme_minimal()
+  
+  
+  })
+
+output$table <- renderDT({ 
+  
+  dat %>%
+    filter(species %in% input$species)
+  
+  
+  
+  
+  })
+
+
+
+  
+  
+ 
+
+  
+```
+
+
+
+
+<b>Statistics</b> {data-orientation=rows}
+=========================================
+
+
+Column 1
+-----------------------------------------
+
+### <b>Bill length vs. depth</b>
+
+```{r}
+
+
+renderPlotly({
+  
+  
+  bill_len_dep <- ggplot(data = penguins,
+                         aes(x = bill_length_mm,
+                             y = bill_depth_mm,
+                             group = species)) +
+  geom_point(aes(color = species, 
+                 shape = species),
+             size = 3,
+             alpha = 0.8) +
+  geom_smooth(method = "lm", se = FALSE, aes(color = species)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  labs(title = "Penguin bill dimensions",
+       subtitle = "Bill length and depth for Adelie, Chinstrap and Gentoo Penguins at Palmer Station LTER",
+       x = "Bill length (mm)",
+       y = "Bill depth (mm)",
+       color = "Penguin species",
+       shape = "Penguin species") +
+  theme(legend.position = c(0.85, 0.15),
+        plot.title.position = "plot",
+        plot.caption = element_text(hjust = 0, face= "italic"),
+        plot.caption.position = "plot")
+
+ggplotly(bill_len_dep)
+  
+  
+})
+
+```
+
+
+### <b>Flipper Histogram</b>
+
+
+```{r}
+
+renderPlotly({
+  
+  
+  
+flipper_hist <- ggplot(data = penguins, aes(x = flipper_length_mm)) +
+  geom_histogram(aes(fill = species), 
+                 alpha = 0.5, 
+                 position = "identity") +
+  scale_fill_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Flipper length (mm)",
+       y = "Frequency",
+       title = "Penguin flipper lengths")
+
+ggplotly(flipper_hist)
+  
+  
+  
+})
+
+
+```
+
+
+
+<b>About</b>
+=====================
+
+
+Column
+--------------------
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

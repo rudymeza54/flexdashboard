@@ -1,0 +1,57 @@
+/* Palmer Penguins Shiny Dashboard */
+
+/* Format Chart Headers */
+
+.chart-title {
+    border-bottom: 1px solid #dfdfdf;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 7px 10px 4px;
+    color: white;
+    font-family: inherit;
+    background-color: purple;
+}
+
+
+/* Format Navigation Bar for Dashboard */
+.navbar-inverse {
+    background-color: purple;
+    border-color: purple;
+}
+
+
+.navbar, [data-toggle=tab], .navbar-brand  {
+background-color:purple!important;
+boarder-color: #ffffff!important;}
+
+
+
+
+/* Sidebar Format */
+.section.sidebar {
+    top: 51px;
+    background-color: darkorange;
+    color: #ffffff;
+}
+
+
+/* Format the valueboxes */
+
+
+/* This will make the the text color white for the valueboxes */
+
+.value-box .value {
+    background-color: darkorange;
+    color: #ffffff;
+}
+.value-box .caption {
+    background-color: darkorange;
+    color: #ffffff;
+}
+
+.value-box-primary {
+    background-color: darkorange;
+    color: #ffffff;
+}
+
+
