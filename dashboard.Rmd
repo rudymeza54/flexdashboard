@@ -73,7 +73,7 @@ Sidebar {.sidebar}
 
 selectInput("species", label = HTML('<b style="color:#fffff;
                font-size: 20px;
-               ">Select Penguins Species:</b>'), 
+               ">Select Penguin Species:</b>'), 
     choices = species, 
     selected = "Chinstrap")
 
